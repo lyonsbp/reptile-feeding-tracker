@@ -13,6 +13,10 @@ export default function Index() {
     <div>
       <h1 className="text-2xl">Feeding Tracker</h1>
 
+      <span>Date: </span>
+      <input type="date" />
+
+      <h2 className="text-xl">Feeders</h2>
       <FeederWidget title="Cricket" />
       <FeederWidget title="Dubia Roach" />
       <FeederWidget title="BSFL" />
