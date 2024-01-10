@@ -12,12 +12,15 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function clientAction({ request }: ActionFunctionArgs) {
-  console.log("posted");
+export async function action({ request }: ActionFunctionArgs) {
   const data = await request.formData();
-  for (const [key, value] of data.entries()) {
-    console.log(key, value);
-  }
+
+  return data;
+}
+
+export async function clientAction({ request }: ActionFunctionArgs) {
+  const data = await request.formData();
+
   window.localStorage.setItem(
     "feederData",
     JSON.stringify(Object.fromEntries(data.entries()))
@@ -25,6 +28,8 @@ export async function clientAction({ request }: ActionFunctionArgs) {
 
   return data;
 }
+
+export async function loader({ request }: LoaderFunctionArgs) {}
 
 export async function clientLoader({ request }: LoaderFunctionArgs) {
   const data = window.localStorage.getItem("feederData");
