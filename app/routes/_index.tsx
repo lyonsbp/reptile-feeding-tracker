@@ -12,9 +12,10 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ context, request }: ActionFunctionArgs) {
   const data = await request.formData();
 
+  console.log(context.env);
   return data;
 }
 
@@ -29,7 +30,10 @@ export async function clientAction({ request }: ActionFunctionArgs) {
   return data;
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {}
+export async function loader({ request }: LoaderFunctionArgs) {
+  console.log(request.headers.get("Cookie"));
+  return null;
+}
 
 export async function clientLoader({ request }: LoaderFunctionArgs) {
   const data = window.localStorage.getItem("feederData");
