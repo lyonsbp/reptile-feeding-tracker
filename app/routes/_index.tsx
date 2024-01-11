@@ -1,8 +1,10 @@
-import type {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  MetaFunction
+import {
+  redirect,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+  type MetaFunction
 } from "@remix-run/cloudflare";
+import { createServerClient, parse, serialize } from "@supabase/ssr";
 import FeederWidget from "~/views/FeederWidget";
 
 export const meta: MetaFunction = () => {
@@ -30,8 +32,35 @@ export async function clientAction({ request }: ActionFunctionArgs) {
   return data;
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  console.log(request.headers.get("Cookie"));
+export async function loader({ request, context }: LoaderFunctionArgs) {
+  const cookies = parse(request.headers.get("Cookie") ?? "");
+  const headers = new Headers();
+
+  const supabase = createServerClient(
+    context.env.SUPABASE_PROJECT_URL!,
+    context.env.SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(key) {
+          return cookies[key];
+        },
+        set(key, value, options) {
+          headers.append("Set-Cookie", serialize(key, value, options));
+        },
+        remove(key, options) {
+          headers.append("Set-Cookie", serialize(key, "", options));
+        }
+      }
+    }
+  );
+
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect("/login", { headers });
+  }
   return null;
 }
 

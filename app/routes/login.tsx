@@ -1,5 +1,6 @@
 import { type ActionFunctionArgs } from "@remix-run/node";
 import { Form } from "@remix-run/react";
+import { redirect } from "@remix-run/cloudflare";
 import { createServerClient, parse, serialize } from "@supabase/ssr";
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -25,13 +26,11 @@ export async function action({ request, context }: ActionFunctionArgs) {
     }
   );
 
-  const { data, error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: formData.get("email") as string,
-    password: formData.get("password") as string,
-    options: {
-      emailRedirectTo: context.env.AUTH_REDIRECT_URI
-    }
+    password: formData.get("password") as string
   });
+  console.log(data.session);
 
   if (error) {
     return new Response(JSON.stringify(error), {
@@ -39,9 +38,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
     });
   }
 
-  return new Response(JSON.stringify(data), {
-    headers
-  });
+  return redirect("/", { headers });
 }
 
 export default function signup() {
@@ -50,7 +47,7 @@ export default function signup() {
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Create an account
+            Login to your account
           </h2>
         </div>
 
@@ -100,19 +97,19 @@ export default function signup() {
                   type="submit"
                   className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
-                  Sign Up
+                  Login
                 </button>
               </div>
             </Form>
           </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
-            Have an account?{" "}
+            Not a member?{" "}
             <a
-              href="/login"
+              href="/signup"
               className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
             >
-              Login
+              Sign Up
             </a>
           </p>
         </div>
