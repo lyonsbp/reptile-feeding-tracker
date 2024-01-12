@@ -6,9 +6,10 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration
+  ScrollRestoration,
+  useNavigate
 } from "@remix-run/react";
-
+import { NextUIProvider } from "@nextui-org/react";
 import tailwindStyles from "./tailwind.css";
 
 export const links: LinksFunction = () => [
@@ -17,8 +18,10 @@ export const links: LinksFunction = () => [
 ];
 
 export default function App() {
+  const navigate = useNavigate();
+
   return (
-    <html lang="en">
+    <html lang="en" className="light">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -26,10 +29,12 @@ export default function App() {
         <Links />
       </head>
       <body className="m-2">
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
+        <NextUIProvider navigate={navigate}>
+          <Outlet />
+          <ScrollRestoration />
+          <Scripts />
+          <LiveReload />
+        </NextUIProvider>
       </body>
     </html>
   );

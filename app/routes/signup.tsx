@@ -1,5 +1,5 @@
 import { type ActionFunctionArgs } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { json, useActionData, useFetcher } from "@remix-run/react";
 import { createServerClient, parse, serialize } from "@supabase/ssr";
 
 export async function action({ request, context }: ActionFunctionArgs) {
@@ -34,17 +34,61 @@ export async function action({ request, context }: ActionFunctionArgs) {
   });
 
   if (error) {
-    return new Response(JSON.stringify(error), {
+    return json({ error, status: "ERROR" } as const, {
       headers
     });
   }
 
-  return new Response(JSON.stringify(data), {
+  return json({ data, status: "OK" } as const, {
     headers
   });
 }
 
-export default function signup() {
+export default function SignUp() {
+  const fetcher = useFetcher<typeof action>();
+  const actionData = useActionData<typeof action>();
+
+  if (fetcher.data && fetcher.data.status === "OK") {
+    return (
+      <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            Welcome to Reptile Feeder!
+          </h2>
+        </div>
+
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
+          <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+            <p className="mt-10 text-center text-sm text-gray-500">
+              You are now signed up! Please check your email for a confirmation
+              link.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (fetcher.data && fetcher.data.status === "ERROR") {
+    return (
+      <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            Error signing up
+          </h2>
+        </div>
+
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
+          <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
+            <p className="mt-10 text-center text-sm text-gray-500">
+              {fetcher.data.error.message}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -56,7 +100,7 @@ export default function signup() {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <Form className="space-y-6" method="POST">
+            <fetcher.Form className="space-y-6" method="POST">
               <div>
                 <label
                   htmlFor="email"
@@ -98,12 +142,14 @@ export default function signup() {
               <div>
                 <button
                   type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600
+                  disabled:opacity-50"
+                  disabled={fetcher.state === "submitting"}
                 >
                   Sign Up
                 </button>
               </div>
-            </Form>
+            </fetcher.Form>
           </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
