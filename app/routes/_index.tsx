@@ -2,11 +2,13 @@ import {
   redirect,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
-  type MetaFunction
+  type MetaFunction,
+  json
 } from "@remix-run/cloudflare";
 import { getServerClient } from "~/util/supabase";
 import FeederWidget from "~/views/FeederWidget";
 import SignOut from "./signout";
+import { getTodayAsDateValue } from "~/util/date";
 
 export const meta: MetaFunction = () => {
   return [
@@ -31,7 +33,22 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   if (!user) {
     return redirect("/signin", { headers });
   }
-  return user;
+
+  const { data: feederData, error: feederError } = await supabase
+    .from("feeder")
+    .select();
+  if (feederError) {
+    return json({ error: feederError }, { headers });
+  }
+
+  const { data: entryData, error: entryError } = await supabase
+    .from("day_entry")
+    .select();
+  if (entryError) {
+    return json({ error: feederError }, { headers });
+  }
+
+  return json({ feederData, entryData }, { headers });
 }
 
 export default function Index() {

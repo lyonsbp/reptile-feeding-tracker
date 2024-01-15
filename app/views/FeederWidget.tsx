@@ -1,15 +1,14 @@
 import { getTodayAsDateValue } from "~/util/date";
 import FeederEntry from "~/components/FeederEntry";
-import { useFetcher, useLoaderData } from "@remix-run/react";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/cloudflare";
-
-export async function loader({ context, request }: LoaderFunctionArgs) {}
-
-export async function action({ context, request }: ActionFunctionArgs) {}
+import { useFetcher, useLoaderData, useRevalidator } from "@remix-run/react";
+import { useMount } from "~/util/hooks";
 
 export default function FeederWidget() {
   const fetcher = useFetcher();
   const data = useLoaderData();
+  const { revalidate } = useRevalidator();
+
+  useMount(() => revalidate);
 
   return (
     <fetcher.Form method="post">
