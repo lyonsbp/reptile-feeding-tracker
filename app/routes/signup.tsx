@@ -1,35 +1,19 @@
 import { type ActionFunctionArgs } from "@remix-run/node";
-import { json, useActionData, useFetcher } from "@remix-run/react";
-import { createServerClient, parse, serialize } from "@supabase/ssr";
+import { json, useFetcher } from "@remix-run/react";
+
+import { getServerClient } from "~/util/supabase";
+import { IEnv } from "~/util/types";
 
 export async function action({ request, context }: ActionFunctionArgs) {
-  const cookies = parse(request.headers.get("Cookie") ?? "");
-  const headers = new Headers();
   const formData = await request.formData();
 
-  const supabase = createServerClient(
-    context.env.SUPABASE_PROJECT_URL!,
-    context.env.SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(key) {
-          return cookies[key];
-        },
-        set(key, value, options) {
-          headers.append("Set-Cookie", serialize(key, value, options));
-        },
-        remove(key, options) {
-          headers.append("Set-Cookie", serialize(key, "", options));
-        }
-      }
-    }
-  );
+  const { supabase, headers } = getServerClient(request, context);
 
   const { data, error } = await supabase.auth.signUp({
     email: formData.get("email") as string,
     password: formData.get("password") as string,
     options: {
-      emailRedirectTo: context.env.AUTH_REDIRECT_URI
+      emailRedirectTo: (context.env as IEnv).AUTH_REDIRECT_URI
     }
   });
 
@@ -46,7 +30,6 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
 export default function SignUp() {
   const fetcher = useFetcher<typeof action>();
-  const actionData = useActionData<typeof action>();
 
   if (fetcher.data && fetcher.data.status === "OK") {
     return (

@@ -8,11 +8,10 @@ export async function action({ request, context }: ActionFunctionArgs) {
 
   const { supabase, headers } = getServerClient(request, context);
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabase.auth.signInWithPassword({
     email: formData.get("email") as string,
     password: formData.get("password") as string
   });
-  console.log(data.session);
 
   if (error) {
     return new Response(JSON.stringify(error), {
