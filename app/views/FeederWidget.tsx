@@ -1,6 +1,11 @@
 import { getTodayAsDateValue } from "~/util/date";
 import FeederEntry from "~/components/FeederEntry";
 import { useFetcher, useLoaderData } from "@remix-run/react";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/cloudflare";
+
+export async function loader({ context, request }: LoaderFunctionArgs) {}
+
+export async function action({ context, request }: ActionFunctionArgs) {}
 
 export default function FeederWidget() {
   const fetcher = useFetcher();

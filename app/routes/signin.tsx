@@ -1,30 +1,12 @@
 import { type ActionFunctionArgs } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import { redirect } from "@remix-run/cloudflare";
-import { createServerClient, parse, serialize } from "@supabase/ssr";
+import { getServerClient } from "~/util/supabase";
 
 export async function action({ request, context }: ActionFunctionArgs) {
-  const cookies = parse(request.headers.get("Cookie") ?? "");
-  const headers = new Headers();
   const formData = await request.formData();
 
-  const supabase = createServerClient(
-    context.env.SUPABASE_PROJECT_URL!,
-    context.env.SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(key) {
-          return cookies[key];
-        },
-        set(key, value, options) {
-          headers.append("Set-Cookie", serialize(key, value, options));
-        },
-        remove(key, options) {
-          headers.append("Set-Cookie", serialize(key, "", options));
-        }
-      }
-    }
-  );
+  const { supabase, headers } = getServerClient(request, context);
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email: formData.get("email") as string,
@@ -41,7 +23,7 @@ export async function action({ request, context }: ActionFunctionArgs) {
   return redirect("/", { headers });
 }
 
-export default function signup() {
+export default function SignIn() {
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
