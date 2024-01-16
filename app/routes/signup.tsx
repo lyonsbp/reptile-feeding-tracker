@@ -74,7 +74,7 @@ export default function SignUp() {
 
   return (
     <>
-      <div className="flex min-h-full flex-1 flex-col justify-center py-8 sm:px-6 lg:px-8">
+      <div className="flex min-h-full flex-1 flex-col justify-center py-4 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <Image
             className="mx-auto"
