@@ -8,7 +8,6 @@ import {
 import { getServerClient } from "~/util/supabase";
 import FeederWidget from "~/views/FeederWidget";
 import SignOut from "./signout";
-import { getTodayAsDateValue } from "~/util/date";
 
 export const meta: MetaFunction = () => {
   return [
@@ -54,7 +53,6 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 export default function Index() {
   return (
     <div>
-      <SignOut />
       <h1 className="text-2xl">Feeding Tracker</h1>
 
       <FeederWidget />

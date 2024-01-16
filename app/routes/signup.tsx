@@ -1,6 +1,6 @@
 import { type ActionFunctionArgs } from "@remix-run/node";
 import { json, useFetcher } from "@remix-run/react";
-
+import { Image } from "@nextui-org/react";
 import { getServerClient } from "~/util/supabase";
 import { IEnv } from "~/util/types";
 
@@ -76,6 +76,12 @@ export default function SignUp() {
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <Image
+            className="mx-auto"
+            width="256"
+            height="256"
+            src="/reptile-logo.png"
+          />
           <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
             Create an account
           </h2>

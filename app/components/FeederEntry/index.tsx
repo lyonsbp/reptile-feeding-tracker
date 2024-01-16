@@ -36,6 +36,7 @@ export default function FeederEntry({ title, amount = 0 }: FeederWidgetProps) {
         onBlur={e => setCount(+e.target.value)}
         min="0"
         name={title}
+        id={title}
       />
       <button
         className="rounded bg-gray-400 px-2 py-1"
