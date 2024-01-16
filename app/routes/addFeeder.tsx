@@ -2,7 +2,9 @@ import { Input } from "@nextui-org/react";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/cloudflare";
 import { Form } from "@remix-run/react";
 
-export function action({ context, request }: ActionFunctionArgs) {
+export async function action({ context, request }: ActionFunctionArgs) {
+  const data = await request.formData();
+
   return null;
 }
 

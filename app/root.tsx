@@ -48,7 +48,7 @@ export default function App() {
               />
               <h1 className="text-2xl">My Reptile Pal</h1>
             </NavbarBrand>
-            <NavbarContent className="sm:flex gap-4" justify="center">
+            <NavbarContent className="hidden sm:flex gap-4" justify="center">
               <NavbarItem>
                 <Link href="/">Tracker</Link>
               </NavbarItem>
